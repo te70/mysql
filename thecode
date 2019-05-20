@@ -1,0 +1,55 @@
+Open `C:\xampp\mysql\bin\my.ini` (MySQL config file)
+
+Find the line `[mysqld]` and right below it add `skip-grant-tables`. Example:
+
+```
+# The MySQL server
+[mysqld]
+skip-grant-tables
+port= 3306
+socket = "C:/xampp/mysql/mysql.sock"
+basedir = "C:/xampp/mysql" 
+tmpdir = "C:/xampp/tmp" 
+[...etc...]
+```
+
+This should allow you to access MySQL if you don't know your password.
+
+Stop and start MySQL from XAMPP to make this change take effect.
+
+Next, in command line, connect to MySQL:
+
+```
+C:\xampp\mysql\bin\mysql.exe --user=root
+```
+
+Once in MySQL command line "select" the `mysql` database:
+
+```
+USE mysql;
+```
+
+Then, the following command will list all your MySQL users:
+```
+SELECT * FROM user \G;
+```
+
+You can scan through the rows to see what the `root` user's password is set to. There will be a few `root` users listed, with different hosts.
+
+To set all `root` user's to have a blank password, run this command:
+
+```
+UPDATE user SET password = '' WHERE user = 'root';
+```
+
+When you're done, run `exit;` to exit the MySQL command line.
+
+Next, re-enable password checking by removing `skip-grant-tables` from `C:\xampp\mysql\bin\my.ini`. 
+
+Save changes, restart MySQL from XAMPP.
+
+## Test it
+Finally, test you can connect to the database using username `root` and password `''` (blank) via one of the following methods:
+
+1. Attempting to access phpMyAdmin (http://localhost/phpmyadmin)
+2. Run the [debug route](https://github.com/susanBuck/dwa15-fall2017/blob/master/03_Laravel/24_Local_database_config.md#test-your-connection) I provided from within one of your Laravel apps
